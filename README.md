@@ -9,7 +9,7 @@
 
 ## About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+Thats a backend in an API REST format using NodeJS, Express and other packages to make it smoothly.
 
 ## Getting Started <a name = "getting_started"></a>
 
@@ -43,4 +43,4 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## Usage <a name = "usage"></a>
 
-Add notes about how to use the system.
+The purpose os this API is to provide services for a Gym business basic students control.
