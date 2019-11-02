@@ -14,11 +14,11 @@ class EnrollmentController {
         const schema = Yup.object().shape({
             student_id: Yup.number().required(),
             plan_id: Yup.number().required(),
-            start_date: Yup.number().required()
+            start_date: Yup.date().required()
         });
 
         if (!(await schema.isValid(req.body))) {
-            return res.status(400).json({ error: 'Validation fails!' });
+            return res.status(400).json({ error: 'Validation failed!' });
         }
 
         const enrollmentExists = await Enrollment.findOne({
@@ -35,7 +35,7 @@ class EnrollmentController {
         const plan = await Plan.findByPk(plan_id);
 
         if (!plan) {
-            return res.status(400).json({ error: 'Plan does not exist' });
+            return res.status(400).json({ error: 'Choose a valid plan' });
         }
 
         const price = plan.duration * plan.price;
@@ -50,7 +50,7 @@ class EnrollmentController {
         });
 
         if (!student) {
-            return res.status(400).json({ error: 'Student not found' });
+            return res.status(400).json({ error: 'Choose a valid student' });
         }
 
         const enrollment = await Enrollment.create({
@@ -62,6 +62,55 @@ class EnrollmentController {
         });
 
         return res.json(enrollment);
+    }
+
+    async update(req, res) {
+        const schema = Yup.object().shape({
+            plan_id: Yup.number().required(),
+            start_date: Yup.date().required()
+        });
+
+        if (!(await schema.isValid(req.body))) {
+            return res.status(400).json({ error: 'Validation failed!' });
+        }
+
+        const enrollment = await Enrollment.findByPk(req.params.id);
+
+        if (!enrollment) {
+            return res.status(400).json({ error: 'Enrollment not found' });
+        }
+
+        const { plan_id, start_date } = req.body;
+        const plan = await Plan.findByPk(plan_id);
+
+        if (plan_id !== enrollment.plan_id && plan) {
+            const price = plan.price * plan.duration;
+            const end_date = addMonths(parseISO(start_date), plan.duration);
+
+            await enrollment.update({
+                plan_id,
+                price,
+                end_date,
+                start_date
+            });
+            return res.json({ message: 'Enrollment updated' });
+        }
+
+        return res.status(400).json({ error: 'Please choose a valid plan' });
+    }
+
+    async delete(req, res) {
+        const { id } = req.params;
+        const enrollment = await Enrollment.findByPk(id);
+
+        if (!enrollment) {
+            return res.status(400).json({ error: 'Enrollment not found' });
+        }
+
+        await Enrollment.destroy({
+            where: { id }
+        });
+        return res.json({ message: 'Enrollment deleted' });
     }
 }
 
