@@ -66,8 +66,8 @@ class EnrollmentController {
 
     async update(req, res) {
         const schema = Yup.object().shape({
-            plan_id: Yup.number().required(),
-            start_date: Yup.date().required()
+            plan_id: Yup.number(),
+            start_date: Yup.date()
         });
 
         if (!(await schema.isValid(req.body))) {
