@@ -15,16 +15,9 @@ class StudentController {
             email: Yup.string()
                 .email()
                 .required(),
-            age: Yup.number()
-                .integer()
-                .required()
-                .min(1),
-            height: Yup.float()
-                .required()
-                .min(2),
-            weight: Yup.float()
-                .required()
-                .min(2)
+            age: Yup.number().required(),
+            height: Yup.number().required(),
+            weight: Yup.number().required()
         });
 
         if (!(await schema.isValid(req.body))) {
