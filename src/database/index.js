@@ -4,6 +4,8 @@
 // https://opensource.org/licenses/MIT
 
 import Sequelize from 'sequelize';
+import mongoose from 'mongoose';
+
 import User from '../app/models/User';
 import Student from '../app/models/Student';
 import Plan from '../app/models/Plan';
@@ -15,6 +17,7 @@ const models = [User, Student, Plan, Enrollment];
 class Database {
     constructor() {
         this.init();
+        this.mongo();
     }
 
     // abre a conexão
@@ -29,6 +32,17 @@ class Database {
                 model =>
                     model.associate && model.associate(this.connection.models)
             );
+    }
+
+    mongo() {
+        this.mongoConnection = mongoose.connect(
+            'mongodb://localhost:27017/gympoint',
+            {
+                useNewUrlParser: true,
+                useFindAndModify: true,
+                useUnifiedTopology: true
+            }
+        );
     }
 }
 
