@@ -4,13 +4,14 @@ import Mail from '../../lib/Mail';
 
 class EnrollmentMail {
     get key() {
+        // each job needs an unique key - usually the class name
         return 'EnrollmentMail';
     }
 
     async handle({ data }) {
         const { student, plan, end_date, price } = data;
 
-        console.log('Queue executed');
+        // console.log('Queue executed');
 
         await Mail.sendMail({
             to: `${student.name} <${student.email}>`,
