@@ -1,4 +1,4 @@
-// import { format, parseISO, subDays, startOfDay, endOfDay } from 'date-fns';
+import { subDays, startOfDay, endOfDay } from 'date-fns';
 
 import Checkin from '../schemas/Checkin';
 import Student from '../models/Student';
@@ -39,15 +39,27 @@ class CheckinController {
             return res.status(400).json({ error: 'Student is not enrolled.' });
         }
 
-        // const last7Days = format(subDays(new Date(), 7), 'yyyy-MM-dd')
+        const today = startOfDay(new Date());
+        const last7Days = subDays(today, 7);
 
-        // const checkInCount = await Checkin.count({
-        //     where:
-        // })
+        const checkInCount = await Checkin.find({
+            student_id: student.id
+        })
+            .gte('createdAt', startOfDay(last7Days))
+            .lte('createdAt', endOfDay(today))
+            .countDocuments();
+
+        // verify if its exceed 5 chekins on 7 days role
+        if (checkInCount > 5) {
+            return res.status(400).json({
+                error: '05 checkins on a seven day row limit exceeded.'
+            });
+        }
 
         await Checkin.create({
             student_id: student.id
         });
+
         return res.json({ message: 'Checkin done' });
     }
 }
